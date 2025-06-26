@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xadrez Simples - Player vs Player</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #e6ecf0; /* Um azul claro suave */
+            margin: 0;
+            color: #34495e; /* Azul escuro para texto */
+        }
+
+        h1 {
+            color: #2c3e50; /* Azul marinho */
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        #game-status {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #3498db; /* Azul vibrante */
+            text-align: center;
+            min-height: 1.6em; /* Garante espaço para mensagens longas */
+        }
+
+        #chessboard-container {
+            border: 8px solid #555; /* Borda mais grossa */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada */
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #333; /* Fundo escuro para a borda */
+        }
+
+        #chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 70px);
+            grid-template-rows: repeat(8, 70px);
+            width: 560px;
+            height: 560px;
+        }
+
+        .square {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em; /* Peças maiores */
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .square:hover:not(.selected) {
+            transform: scale(1.02); /* Leve zoom ao passar o mouse */
+        }
+
+        .light {
+            background-color: #f0d9b5; /* Bege claro */
+        }
+
+        .dark {
+            background-color: #b58863; /* Marrom escuro */
+        }
+
+        .selected {
+            background-color: #79c74f; /* Verde selecionado */
+            box-shadow: inset 0 0 0 4px rgba(0,0,0,0.4);
+        }
+
+        .possible-move {
+            background-color: #a0ddf0; /* Azul claro para movimentos possíveis */
+            position: relative;
+        }
+
+        .possible-move::after {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.2); /* Ponto central */
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* Não interfere com o clique */
+        }
+
+        .possible-move.capture-target {
+            background-color: #e74c3c; /* Vermelho para capturas */
+        }
+
+        .possible-move.capture-target::after {
+            background-color: rgba(255, 255, 255, 0.4);
+            border: 2px solid white;
+            box-sizing: border-box;
+        }
+
+        .in-check {
+            background-color: #e74c3c; /* Vermelho choque para rei em xeque */
+            animation: pulse-red 1s infinite alternate; /* Animação */
+        }
+
+        @keyframes pulse-red {
+            from { background-color: #e74c3c; }
+            to { background-color: #c0392b; }
+        }
+
+        .piece {
+            line-height: 1; /* Alinha melhor os ícones unicode */
+            pointer-events: none; /* Permite clicar no quadrado, não na peça */
+        }
+
+        .piece.white {
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .piece.black {
+            color: #000;
+            text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.7);
+        }
+
+        #controls {
+            margin-top: 30px;
+        }
+
+        #reset-button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #2ecc71; /* Verde esmeralda */
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #reset-button:hover {
+            background-color: #27ae60; /* Verde mais escuro no hover */
+            transform: translateY(-2px); /* Efeito de elevação */
+        }
+
+        #reset-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo de Xadrez</h1>
+    <div id="game-status"></div>
+
+    <div id="chessboard-container">
+        <div id="chessboard"></div>
+    </div>
+
+    <div id="controls">
+        <button id="reset-button">Reiniciar Jogo</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
