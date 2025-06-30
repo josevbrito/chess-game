@@ -1,56 +1,63 @@
 # Chess Game
 
-Este é um jogo de xadrez básico para dois jogadores, implementado usando apenas HTML, CSS e JavaScript. O objetivo é fornecer uma base funcional de um jogo de xadrez com validação de movimentos e detecção de xeque, ideal para quem está aprendendo desenvolvimento web ou quer um projeto para colocar no portfólio.
+This is a basic two-player chess game built using only **HTML, CSS, and JavaScript**.
+The goal is to provide a functional foundation for a chess game with **move validation** and **check detection**, making it perfect for those learning web development or looking for a fun project to add to their portfolio.
 
 ---
 
-## Funcionalidades
+## Features
 
-* **Tabuleiro Interativo:** Interface visual clara com casas de cores alternadas e peças de xadrez em Unicode.
-* **Seleção e Destaque:** Ao clicar em uma peça, o quadrado é destacado em verde.
-* **Movimentos Válidos:** Os quadrados para onde a peça selecionada pode se mover legalmente são destacados em azul claro. Se o movimento resultar em uma captura, o quadrado de destino é destacado em vermelho.
-* **Validação de Regras:**
-    * **Peões:** Movimento de uma ou duas casas para frente no primeiro lance, e captura diagonal.
-    * **Torres, Bispos, Rainhas:** Movimentos em linha reta ou diagonal, sem pular peças.
-    * **Cavalos:** Movimento em "L".
-    * **Reis:** Movem uma casa em qualquer direção.
-    * **Capturas:** Peças inimigas podem ser capturadas.
-    * **Xeque:** O jogo detecta quando um rei está sob ataque ("em xeque") e exibe uma mensagem de aviso, além de destacar o rei. Movimentos que colocariam o próprio rei em xeque são **impedidos**.
-* **Promoção de Peão:** Automaticamente promove um peão para Rainha ao atingir a última fileira.
-* **Alternância de Turnos:** O turno é automaticamente passado para o próximo jogador após cada movimento válido.
-* **Reiniciar Jogo:** Um botão permite reiniciar o tabuleiro para a posição inicial a qualquer momento.
+* **Interactive Board:** Clean visual interface with alternating square colors and Unicode chess pieces.
+* **Selection Highlighting:** Clicking a piece highlights the square in green.
+* **Valid Moves:** Squares where the selected piece can legally move are highlighted in light blue. If the move results in a capture, the target square is highlighted in red.
+* **Rule Validation:**
 
----
-
-## Como Usar
-
-Para executar este jogo em seu ambiente local, siga estes passos simples:
-
-1.  **Clone ou Baixe o Repositório:** Obtenha os arquivos do projeto.
-2.  **Estrutura de Arquivos:** Certifique-se de que os arquivos `index.html` e `script.js` estejam na **mesma pasta**.
-3.  **Abra no Navegador:** Basta abrir o arquivo `index.html` em qualquer navegador web moderno.
+  * **Pawns:** Move one or two squares forward on the first move and capture diagonally.
+  * **Rooks, Bishops, Queens:** Move in straight or diagonal lines without jumping over pieces.
+  * **Knights:** Move in an “L” shape.
+  * **Kings:** Move one square in any direction.
+  * **Captures:** Opponent pieces can be captured.
+  * **Check:** The game detects when a king is in check, shows a warning message, and highlights the king. Moves that would leave the king in check are **blocked**.
+* **Pawn Promotion:** Automatically promotes a pawn to a queen upon reaching the last rank.
+* **Turn Alternation:** The turn automatically switches to the other player after each valid move.
+* **Restart Game:** A button allows players to reset the board to the initial position at any time.
 
 ---
 
-## Estrutura do Projeto
+## How to Use
 
-* `index.html`: Contém a estrutura HTML do jogo e todo o CSS para estilização.
-* `script.js`: Contém toda a lógica JavaScript, incluindo a renderização do tabuleiro, manipulação de eventos, validação de movimentos e detecção de xeque.
+To run this game locally, follow these simple steps:
 
----
-
-## Próximos Passos (Possíveis Melhorias)
-
-Este jogo serve como um excelente ponto de partida. Se você deseja aprimorá-lo, considere implementar as seguintes funcionalidades:
-
-* **Xeque-mate e Afogamento (Stalemate):** Implementar a lógica para determinar o fim do jogo por xeque-mate ou afogamento.
-* **Roque:** Adicionar o movimento especial de roque para o rei e a torre.
-* ***En Passant*:** Implementar a regra de captura especial para peões.
-* **Interface de Promoção de Peão:** Permitir que o jogador escolha qual peça (Rainha, Torre, Bispo ou Cavalo) o peão será promovido.
-* **Histórico de Movimentos:** Manter e exibir uma lista de todos os movimentos realizados durante a partida.
-* **Sons:** Adicionar efeitos sonoros para movimentos, capturas e xeque.
-* **Design Responsivo:** Otimizar o layout para diferentes tamanhos de tela.
+1. **Clone or Download the Repository:** Get the project files to your machine.
+2. **File Structure:** Make sure `index.html` and `script.js` are in the **same folder**.
+3. **Open in Browser:** Just open `index.html` in any modern web browser.
 
 ---
 
-Sinta-se à vontade para explorar o código, fazer modificações e adicionar novas funcionalidades!
+## Project Structure
+
+* `index.html`: Contains the HTML structure and all CSS styling.
+* `script.js`: Contains the entire JavaScript logic, including board rendering, event handling, move validation, and check detection.
+
+---
+
+## Next Steps (Possible Improvements)
+
+This game is a great starting point. If you'd like to expand it, consider adding the following features:
+
+* **Checkmate & Stalemate Detection:** Implement logic to determine game-ending scenarios.
+* **Castling:** Add the special king and rook move.
+* ***En Passant*:** Implement the special pawn capture rule.
+* **Pawn Promotion Interface:** Let players choose between Queen, Rook, Bishop, or Knight for promotion.
+* **Move History:** Keep and display a list of all moves played.
+* **Sound Effects:** Add sounds for moves, captures, and check alerts.
+* **Responsive Design:** Optimize the layout for different screen sizes.
+
+---
+
+Feel free to explore the code, make modifications, and add new features!
+Contributions are always welcome! ♟️
+
+---
+
+Se quiser, posso também gerar um badge de "Made with JavaScript" ou adicionar uma demo hospedada (com GitHub Pages, por exemplo). Deseja isso também?
