@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xadrez Simples - Player vs Player</title>
+    <title>Chess Game</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -12,13 +12,13 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #e6ecf0; /* Um azul claro suave */
+            background-color: #e6ecf0; /* A soft light blue */
             margin: 0;
-            color: #34495e; /* Azul escuro para texto */
+            color: #34495e; /* Dark blue for text */
         }
 
         h1 {
-            color: #2c3e50; /* Azul marinho */
+            color: #2c3e50; /* Navy blue */
             margin-bottom: 25px;
             font-size: 2.5em;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -28,17 +28,17 @@
             font-size: 1.4em;
             margin-bottom: 20px;
             font-weight: bold;
-            color: #3498db; /* Azul vibrante */
+            color: #3498db; /* Vibrant blue */
             text-align: center;
-            min-height: 1.6em; /* Garante espaço para mensagens longas */
+            min-height: 1.6em; /* Ensures space for longer messages */
         }
 
         #chessboard-container {
-            border: 8px solid #555; /* Borda mais grossa */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada */
+            border: 8px solid #555; /* Thicker border */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* More pronounced shadow */
             border-radius: 12px;
             overflow: hidden;
-            background-color: #333; /* Fundo escuro para a borda */
+            background-color: #333; /* Dark background for the border */
         }
 
         #chessboard {
@@ -55,31 +55,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5em; /* Peças maiores */
+            font-size: 3.5em; /* Larger pieces */
             cursor: pointer;
             user-select: none;
             transition: background-color 0.2s ease, transform 0.1s ease;
         }
 
         .square:hover:not(.selected) {
-            transform: scale(1.02); /* Leve zoom ao passar o mouse */
+            transform: scale(1.02); /* Slight zoom on hover */
         }
 
         .light {
-            background-color: #f0d9b5; /* Bege claro */
+            background-color: #f0d9b5; /* Light beige */
         }
 
         .dark {
-            background-color: #b58863; /* Marrom escuro */
+            background-color: #b58863; /* Dark brown */
         }
 
         .selected {
-            background-color: #79c74f; /* Verde selecionado */
+            background-color: #79c74f; /* Selected green */
             box-shadow: inset 0 0 0 4px rgba(0,0,0,0.4);
         }
 
         .possible-move {
-            background-color: #a0ddf0; /* Azul claro para movimentos possíveis */
+            background-color: #a0ddf0; /* Light blue for possible moves */
             position: relative;
         }
 
@@ -88,17 +88,17 @@
             display: block;
             width: 20px;
             height: 20px;
-            background-color: rgba(0, 0, 0, 0.2); /* Ponto central */
+            background-color: rgba(0, 0, 0, 0.2); /* Central dot */
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none; /* Não interfere com o clique */
+            pointer-events: none; /* Does not interfere with click */
         }
 
         .possible-move.capture-target {
-            background-color: #e74c3c; /* Vermelho para capturas */
+            background-color: #e74c3c; /* Red for captures */
         }
 
         .possible-move.capture-target::after {
@@ -108,8 +108,8 @@
         }
 
         .in-check {
-            background-color: #e74c3c; /* Vermelho choque para rei em xeque */
-            animation: pulse-red 1s infinite alternate; /* Animação */
+            background-color: #e74c3c; /* Shock red for king in check */
+            animation: pulse-red 1s infinite alternate; /* Animation */
         }
 
         @keyframes pulse-red {
@@ -118,8 +118,8 @@
         }
 
         .piece {
-            line-height: 1; /* Alinha melhor os ícones unicode */
-            pointer-events: none; /* Permite clicar no quadrado, não na peça */
+            line-height: 1; /* Better aligns unicode icons */
+            pointer-events: none; /* Allows clicking the square, not the piece */
         }
 
         .piece.white {
@@ -142,7 +142,7 @@
             cursor: pointer;
             border: none;
             border-radius: 8px;
-            background-color: #2ecc71; /* Verde esmeralda */
+            background-color: #2ecc71; /* Emerald green */
             color: white;
             font-weight: bold;
             transition: background-color 0.3s ease, transform 0.2s ease;
@@ -150,8 +150,8 @@
         }
 
         #reset-button:hover {
-            background-color: #27ae60; /* Verde mais escuro no hover */
-            transform: translateY(-2px); /* Efeito de elevação */
+            background-color: #27ae60; /* Darker green on hover */
+            transform: translateY(-2px); /* Lift effect */
         }
 
         #reset-button:active {
@@ -161,7 +161,7 @@
     </style>
 </head>
 <body>
-    <h1>Jogo de Xadrez</h1>
+    <h1>Chess Game</h1>
     <div id="game-status"></div>
 
     <div id="chessboard-container">
@@ -169,7 +169,7 @@
     </div>
 
     <div id="controls">
-        <button id="reset-button">Reiniciar Jogo</button>
+        <button id="reset-button">Restart Game</button>
     </div>
 
     <script src="script.js"></script>
