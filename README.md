@@ -57,7 +57,3 @@ This game is a great starting point. If you'd like to expand it, consider adding
 
 Feel free to explore the code, make modifications, and add new features!
 Contributions are always welcome! ♟️
-
----
-
-Se quiser, posso também gerar um badge de "Made with JavaScript" ou adicionar uma demo hospedada (com GitHub Pages, por exemplo). Deseja isso também?
