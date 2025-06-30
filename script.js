@@ -6,6 +6,7 @@ let board = [];
 let selectedPiecePos = null; // {row, col} of the selected piece
 let turn = 'white'; // 'white' or 'black'
 let validMovesForSelectedPiece = []; // Stores valid moves for the selected piece
+let gameOver = false; // Flag to indicate if the game is over
 
 // Unicode character mapping for chess pieces
 // Uppercase for Black pieces (standard PGN representation), lowercase for White.
@@ -35,6 +36,7 @@ function initializeBoard() {
     turn = 'white'; // Always starts with white
     selectedPiecePos = null;
     validMovesForSelectedPiece = [];
+    gameOver = false; // Reset game over flag
     renderBoard();
     updateGameStatus();
 }
@@ -86,9 +88,26 @@ function renderBoard() {
 function updateGameStatus() {
     let statusText = `It's ${turn === 'white' ? 'White\'s' : 'Black\'s'} turn`;
     const kingPos = findKing(turn);
-    if (kingPos && isKingInCheck(kingPos.row, kingPos.col)) {
-        statusText += `<br>${turn === 'white' ? 'White' : 'Black'} King is in CHECK!`;
+
+    if (kingPos) { // Ensure king exists before checking
+        const kingColor = getPieceColor(board[kingPos.row][kingPos.col]);
+        if (isKingInCheck(kingPos.row, kingPos.col)) {
+            // Check for checkmate
+            if (isCheckmate(kingColor)) {
+                statusText = `CHECKMATE! ${kingColor === 'white' ? 'Black' : 'White'} wins!`;
+                gameOver = true; // Set game over flag
+            } else {
+                statusText += `<br>${kingColor === 'white' ? 'White' : 'Black'} King is in CHECK!`;
+            }
+        } else {
+            // Check for stalemate if not in check
+            if (hasNoLegalMoves(kingColor)) {
+                statusText = `STALEMATE! It's a draw!`;
+                gameOver = true; // Set game over flag
+            }
+        }
     }
+    
     gameStatus.innerHTML = statusText;
 }
 
@@ -111,6 +130,24 @@ function isValidPos(row, col) {
     return row >= 0 && row < 8 && col >= 0 && col < 8;
 }
 
+// Function to check if a player has any legal moves
+function hasNoLegalMoves(color) {
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const piece = board[r][c];
+            if (piece && getPieceColor(piece) === color) {
+                // If any piece has at least one legal move, it's not checkmate/stalemate
+                if (getPieceMoves(r, c).length > 0) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true; // No legal moves found for any piece of this color
+}
+
+
+// Function to get all legal moves for a piece at (row, col)
 function getPieceMoves(row, col, currentBoard = board) {
     const piece = currentBoard[row][col];
     if (!piece) return [];
@@ -258,6 +295,7 @@ function findKing(color, currentBoard = board) {
     return null; // Should not happen in a valid game
 }
 
+// Checks if the king at (kingRow, kingCol) is in check on currentBoard
 function isKingInCheck(kingRow, kingCol, currentBoard = board) {
     const kingColor = getPieceColor(currentBoard[kingRow][kingCol]);
     const opponentColor = kingColor === 'white' ? 'black' : 'white';
@@ -266,10 +304,12 @@ function isKingInCheck(kingRow, kingCol, currentBoard = board) {
         for (let c = 0; c < 8; c++) {
             const piece = currentBoard[r][c];
             if (piece && getPieceColor(piece) === opponentColor) {
-                // Get opponent's piece moves (without filtering for check)
-                const opponentPieceMoves = getPieceMovesUnfiltered(r, c, currentBoard);
-                for (const move of opponentPieceMoves) {
-                    if (move.row === kingRow && move.col === kingCol) {
+                // Get opponent's piece moves (without filtering for check that would put THEIR king in check)
+                // This is crucial: we need to know all squares an opponent's piece ATTACKS,
+                // regardless if that move would be illegal for the opponent.
+                const opponentPieceAttacks = getPieceAttacks(r, c, currentBoard);
+                for (const attackMove of opponentPieceAttacks) {
+                    if (attackMove.row === kingRow && attackMove.col === kingCol) {
                         return true; // The king is under attack
                     }
                 }
@@ -279,39 +319,31 @@ function isKingInCheck(kingRow, kingCol, currentBoard = board) {
     return false;
 }
 
-// Returns all possible moves for a piece, without checking if the king would be in check.
-// Used specifically by the isKingInCheck function to see if the king IS being attacked.
-function getPieceMovesUnfiltered(row, col, currentBoard = board) {
+// This function gets all squares a piece *attacks*, even if the move itself would be illegal due to putting own king in check.
+// This is essential for correctly determining if an opponent's piece is attacking the king.
+function getPieceAttacks(row, col, currentBoard = board) {
     const piece = currentBoard[row][col];
     if (!piece) return [];
 
     const pieceType = piece.toLowerCase();
     const pieceColor = getPieceColor(piece);
-    let moves = [];
+    let attacks = [];
 
     switch (pieceType) {
         case 'p': // Pawn
             if (pieceColor === 'white') {
-                if (isValidPos(row - 1, col) && currentBoard[row - 1][col] === '') moves.push({ row: row - 1, col: col });
-                if (row === 6 && currentBoard[row - 2][col] === '' && currentBoard[row - 1][col] === '') moves.push({ row: row - 2, col: col });
-                if (isValidPos(row - 1, col - 1)) moves.push({ row: row - 1, col: col - 1 }); // Always add for attack calculation
-                if (isValidPos(row - 1, col + 1)) moves.push({ row: row - 1, col: col + 1 });
+                if (isValidPos(row - 1, col - 1)) attacks.push({ row: row - 1, col: col - 1 });
+                if (isValidPos(row - 1, col + 1)) attacks.push({ row: row - 1, col: col + 1 });
             } else { // Black pawn
-                if (isValidPos(row + 1, col) && currentBoard[row + 1][col] === '') moves.push({ row: row + 1, col: col });
-                if (row === 1 && currentBoard[row + 2][col] === '' && currentBoard[row + 1][col] === '') moves.push({ row: row + 2, col: col });
-                if (isValidPos(row + 1, col - 1)) moves.push({ row: row + 1, col: col - 1 });
-                if (isValidPos(row + 1, col + 1)) moves.push({ row: row + 1, col: col + 1 });
+                if (isValidPos(row + 1, col - 1)) attacks.push({ row: row + 1, col: col - 1 });
+                if (isValidPos(row + 1, col + 1)) attacks.push({ row: row + 1, col: col + 1 });
             }
             break;
-        case 'r':
-        case 'b':
-        case 'q':
-            const directions = (pieceType === 'r') ? [[-1, 0], [1, 0], [0, -1], [0, 1]] : // Rook
-                             (pieceType === 'b') ? [[-1, -1], [-1, 1], [1, -1], [1, 1]] : // Bishop
-                             [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]]; // Queen
-            moves.push(...getSlidingMovesUnfiltered(row, col, directions, pieceColor, currentBoard));
+        case 'r': // Rook
+            const rookDirections = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+            attacks.push(...getSlidingAttacks(row, col, rookDirections, pieceColor, currentBoard));
             break;
-        case 'n':
+        case 'n': // Knight
             const knightMoves = [
                 [-2, -1], [-2, 1], [-1, -2], [-1, 2],
                 [1, -2], [1, 2], [2, -1], [2, 1]
@@ -320,11 +352,22 @@ function getPieceMovesUnfiltered(row, col, currentBoard = board) {
                 const newRow = row + dr;
                 const newCol = col + dc;
                 if (isValidPos(newRow, newCol)) {
-                    moves.push({ row: newRow, col: newCol });
+                    attacks.push({ row: newRow, col: newCol });
                 }
             }
             break;
-        case 'k':
+        case 'b': // Bishop
+            const bishopDirections = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+            attacks.push(...getSlidingAttacks(row, col, bishopDirections, pieceColor, currentBoard));
+            break;
+        case 'q': // Queen
+            const queenDirections = [
+                [-1, 0], [1, 0], [0, -1], [0, 1],
+                [-1, -1], [-1, 1], [1, -1], [1, 1]
+            ];
+            attacks.push(...getSlidingAttacks(row, col, queenDirections, pieceColor, currentBoard));
+            break;
+        case 'k': // King
             const kingMoves = [
                 [-1, -1], [-1, 0], [-1, 1],
                 [0, -1],           [0, 1],
@@ -334,35 +377,37 @@ function getPieceMovesUnfiltered(row, col, currentBoard = board) {
                 const newRow = row + dr;
                 const newCol = col + dc;
                 if (isValidPos(newRow, newCol)) {
-                    moves.push({ row: newRow, col: newCol });
+                    attacks.push({ row: newRow, col: newCol });
                 }
             }
             break;
     }
-    return moves;
+    return attacks;
 }
 
-function getSlidingMovesUnfiltered(row, col, directions, pieceColor, currentBoard) {
-    const moves = [];
+// Helper for sliding pieces to get all squares they *attack*
+function getSlidingAttacks(row, col, directions, pieceColor, currentBoard) {
+    const attacks = [];
     for (const [dr, dc] of directions) {
         let newRow = row + dr;
         let newCol = col + dc;
         while (isValidPos(newRow, newCol)) {
             const targetPiece = currentBoard[newRow][newCol];
             if (targetPiece && getPieceColor(targetPiece) === pieceColor) {
-                // Stop if a piece of the same color is found
-                break;
+                // If it's a friendly piece, it blocks the line of attack, but the square before it is still attacked
+                attacks.push({ row: newRow, col: newCol }); // The square with the friendly piece is *not* attacked, but it's part of the path
+                break; 
             }
-            moves.push({ row: newRow, col: newCol });
+            attacks.push({ row: newRow, col: newCol });
             if (targetPiece && getPieceColor(targetPiece) !== pieceColor) {
-                // If it's an enemy piece, it can capture, but cannot jump over
+                // If it's an enemy piece, it is attacked, and also blocks the line
                 break;
             }
             newRow += dr;
             newCol += dc;
         }
     }
-    return moves;
+    return attacks;
 }
 
 
@@ -378,9 +423,41 @@ function isValidMoveTarget(row, col) {
     return validMovesForSelectedPiece.some(move => move.row === row && move.col === col);
 }
 
+// Function to check for checkmate
+function isCheckmate(color) {
+    // 1. Is the king in check?
+    const kingPos = findKing(color);
+    if (!kingPos || !isKingInCheck(kingPos.row, kingPos.col)) {
+        return false; // Not in check, so not checkmate
+    }
+
+    // 2. Can the king move to a safe square?
+    // 3. Can any piece block the check or capture the attacking piece?
+    // Iterate through all pieces of the current player
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const piece = board[r][c];
+            if (piece && getPieceColor(piece) === color) {
+                // Get all legal moves for this piece (already filtered for leaving own king in check)
+                const legalMoves = getPieceMoves(r, c);
+                if (legalMoves.length > 0) {
+                    return false; // Found at least one legal move, so it's not checkmate
+                }
+            }
+        }
+    }
+
+    return true; // King is in check, and no legal moves are available
+}
+
+
 // --- Click and Game Logic ---
 
 function handleClick(event) {
+    if (gameOver) { // Do not allow moves if the game is over
+        return;
+    }
+
     const row = parseInt(event.currentTarget.dataset.row);
     const col = parseInt(event.currentTarget.dataset.col);
     const clickedPiece = board[row][col];
@@ -436,7 +513,7 @@ function makeMove(fromRow, fromCol, toRow, toCol) {
     clearSelection();
     switchTurn();
     renderBoard();
-    updateGameStatus();
+    updateGameStatus()
 }
 
 function switchTurn() {
